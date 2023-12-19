@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.libnavannotation.FragmentDestination
 import com.example.socialmediaapplication.databinding.FragmentHomeBinding
 
+@FragmentDestination(pageUrl = "main/tabs/home", asStarter = true)
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
