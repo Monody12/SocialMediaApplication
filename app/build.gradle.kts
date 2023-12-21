@@ -55,4 +55,8 @@ dependencies {
     implementation(project(":libNavAnnotation"))
     kapt(project(":libNavCompiler"))
 
+    // 解析生成的json
+    implementation("com.alibaba:fastjson:1.2.75")
+    implementation("com.google.code.gson:gson:2.8.9")
+
 }
