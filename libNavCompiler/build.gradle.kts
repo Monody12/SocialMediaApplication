@@ -1,6 +1,7 @@
 plugins {
     id("java-library")
     id("org.jetbrains.kotlin.jvm")
+    id("kotlin-kapt")
 }
 
 java {
@@ -9,12 +10,12 @@ java {
 }
 
 dependencies{
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(project(":libNavAnnotation"))
-    // 处理json
-    implementation("com.alibaba:fastjson:1.2.59")
+    // 注解处理器依赖的 gson
+    implementation("com.google.code.gson:gson:2.8.9")
     // 依赖注解处理器
-    api("com.google.auto.service:auto-service:1.0-rc7")
-    annotationProcessor("com.google.auto.service:auto-service:1.0-rc7")
-
+    implementation("com.google.auto.service:auto-service:1.1.1")
+    annotationProcessor("com.google.auto.service:auto-service:1.1.1")
 
 }

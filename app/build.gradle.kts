@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -51,5 +53,6 @@ dependencies {
 
     // 注解库和处理器
     implementation(project(":libNavAnnotation"))
-    annotationProcessor(project(":libNavCompiler"))
+    kapt(project(":libNavCompiler"))
+
 }

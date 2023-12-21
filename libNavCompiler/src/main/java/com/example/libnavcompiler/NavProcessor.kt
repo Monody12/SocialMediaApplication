@@ -1,14 +1,10 @@
 package com.example.libnavcompiler
 
-import com.alibaba.fastjson.JSON
-import com.alibaba.fastjson.JSONObject
 import com.example.libnavannotation.ActivityDestination
 import com.example.libnavannotation.FragmentDestination
 import com.google.auto.service.AutoService
+import com.google.gson.Gson
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStreamWriter
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Filer
 import javax.annotation.processing.Messager
@@ -21,9 +17,8 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 import javax.tools.StandardLocation
-import kotlin.math.abs
 
-@AutoService(Process::class)
+@AutoService(javax.annotation.processing.Processor::class)
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @SupportedAnnotationTypes(
     "com.example.libnavannotation.FragmentDestination",
@@ -31,141 +26,112 @@ import kotlin.math.abs
 )
 class NavProcessor : AbstractProcessor() {
 
-    private var messager: Messager? = null
-
+    private var message: Messager? = null
     private var filer: Filer? = null
-
     private val OUTPUT_FILE_NAME = "destination.json"
 
-    override fun init(processingEnv: ProcessingEnvironment?) {
+
+    override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
-        messager = processingEnv?.messager
-        filer = processingEnv?.filer
+        //日志打印，java 环境下不能使用 log
+        message = processingEnv.messager
+        //文件处理工具
+        filer = processingEnv.filer
     }
 
     override fun process(
-        annotations: MutableSet<out TypeElement>?,
-        roundEnv: RoundEnvironment?
+        annotations: Set<TypeElement>,
+        roundEnv: RoundEnvironment
     ): Boolean {
-        val fragmentElements =
-            roundEnv?.getElementsAnnotatedWith(FragmentDestination::class.java)
-        val activityElements =
-            roundEnv?.getElementsAnnotatedWith(FragmentDestination::class.java)
-        val destMap = HashMap<String, String>()
-        if (fragmentElements?.isNotEmpty() == true || activityElements?.isNotEmpty() == true) {
-            if (fragmentElements != null) {
-                handleDestination(fragmentElements, FragmentDestination::class.java, destMap)
-            }
-            if (activityElements != null) {
-                handleDestination(activityElements, ActivityDestination::class.java, destMap)
-            }
-        }
-        // 生成文件 到 app/src/main/assets
 
-        //app/src/main/assets
-        var fos: FileOutputStream? = null
-        var writer: OutputStreamWriter? = null
-        try {
-            //filer.createResource()意思是创建源文件
-            //我们可以指定为class文件输出的地方，
-            //StandardLocation.CLASS_OUTPUT：java文件生成class文件的位置，/app/build/intermediates/javac/debug/classes/目录下
-            //StandardLocation.SOURCE_OUTPUT：java文件的位置，一般在/ppjoke/app/build/generated/source/apt/目录下
-            //StandardLocation.CLASS_PATH 和 StandardLocation.SOURCE_PATH用的不多，指的了这个参数，就要指定生成文件的pkg包名了
-            val resource = filer!!.createResource(
-                StandardLocation.CLASS_OUTPUT,
-                "",
-                OUTPUT_FILE_NAME
-            )
+        //通过注解处理器环境上下文 roundEnv 分别获取项目中标记的注解
+        val fragmentDestination = roundEnv.getElementsAnnotatedWith(FragmentDestination::class.java)
+        val activityDestination = roundEnv.getElementsAnnotatedWith(ActivityDestination::class.java)
+
+        if (fragmentDestination.isNotEmpty() || activityDestination.isNotEmpty()) {
+
+            val destMap = hashMapOf<String?, HashMap<String, Any?>?>()
+            //分别处理 FragmentDestination 和 ActivityDestination 注解类型
+            //并收集到 destMap 中，以此就能记录下所有的页面信息了
+            handleDestination(fragmentDestination, FragmentDestination::class.java, destMap)
+            handleDestination(activityDestination, ActivityDestination::class.java, destMap)
+
+            //生成文件的位置
+            //app/src/main/assets
+
+            //filer.createResource ：创建源文件
+            //CLASS_OUTPUT：java 文件生成 class 文件的位置，/app/build/intermediates/javac/debug/classes/目录下
+            //SOURCE_OUTPUT：java文件的位置，一般在/ppjoke/app/build/generated/source/apt/目录下
+            //CLASS_PATH 和 StandardLocation.SOURCE_PATH用的不多，指的了这个参数，就要指定生成文件的pkg包名了
+            val resource =
+                filer!!.createResource(StandardLocation.CLASS_OUTPUT, "", OUTPUT_FILE_NAME)
             val resourcePath = resource.toUri().path
-            messager!!.printMessage(Diagnostic.Kind.NOTE, "resourcePath:$resourcePath")
 
-            //由于我们想要把json文件生成在app/src/main/assets/目录下,所以这里可以对字符串做一个截取，
-            //以此便能准确获取项目在每个电脑上的 /app/src/main/assets/的路径
+            //由于要将生成的 json 文件生成在 app/src/main/assets/目录下，所以这里可以对字符串做一个截取
+            //以此便能准确的获取每个电脑上的 app/src/main/assets 的路径
             val appPath = resourcePath.substring(0, resourcePath.indexOf("app") + 4)
             val assetsPath = appPath + "src/main/assets/"
-            val file = File(assetsPath)
-            if (!file.exists()) {
-                file.mkdirs()
-            }
 
-            //此处就是稳健的写入了
-            val outPutFile = File(file, OUTPUT_FILE_NAME)
-            if (outPutFile.exists()) {
-                outPutFile.delete()
-            }
-            outPutFile.createNewFile()
 
-            //利用fastjson把收集到的所有的页面信息 转换成JSON格式的。并输出到文件中
-            val content = JSON.toJSONString(destMap)
-            fos = FileOutputStream(outPutFile)
-            writer = OutputStreamWriter(fos, "UTF-8")
-            writer.write(content)
-            writer.flush()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
-            if (fos != null) {
-                try {
-                    fos.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
+            File(assetsPath).let { file ->
+                if (!file.exists()) file.mkdir()
+                File(file, OUTPUT_FILE_NAME).let { newFile ->
+                    if (newFile.exists()) newFile.delete()
+                    newFile.createNewFile()
+                    val content = Gson().toJson(destMap)
+                    newFile.outputStream().bufferedWriter().use {
+                        it.write(content)
+                        it.flush()
+                    }
                 }
             }
         }
-
         return true
     }
 
     private fun handleDestination(
-        elements: Set<Element?>,
-        annotationClaz: Class<out Annotation?>,
-        map: HashMap<String, String>
+        elements: Set<Element>,
+        clazz: Class<out Annotation>,
+        destMap: HashMap<String?, HashMap<String, Any?>?>
     ) {
-        elements.forEach() { element ->
+        for (element in elements) {
+            // TypeElement 是 Element 的一种
+            // 如果注解标记在了类名上，可以直接强转一哈，使用他可以拿到全类名
             val typeElement = element as TypeElement
+            //获取全类名
+            val clazzName = typeElement.qualifiedName.toString()
+            //页面的 id 不能重复，使用 hashcode 即可，
+            val id = kotlin.math.abs(clazzName.hashCode())
             var pageUrl: String? = null
-            val clazName: String? = typeElement.qualifiedName.toString()
-            val id = abs(clazName.hashCode())
             var needLogin = false
             var asStarter = false
             var isFragment = false
-            val annotation = typeElement.getAnnotation(annotationClaz)
+
+            //获取具体的注解
+            val annotation = element.getAnnotation(clazz)
             if (annotation is FragmentDestination) {
                 pageUrl = annotation.pageUrl
-                needLogin = annotation.needLogin
                 asStarter = annotation.asStarter
+                needLogin = annotation.needLogin
                 isFragment = true
             } else if (annotation is ActivityDestination) {
                 pageUrl = annotation.pageUrl
-                needLogin = annotation.needLogin
                 asStarter = annotation.asStarter
-                isFragment = false
+                needLogin = annotation.needLogin
             }
 
-            // 填充hashMap
-            if (map.containsKey(pageUrl)) {
-                messager?.printMessage(
-                    javax.tools.Diagnostic.Kind.ERROR,
-                    "不同的页面不允许使用相同的pageUrl: $clazName"
-                )
+            if (destMap.containsKey(pageUrl)) {
+                message?.printMessage(Diagnostic.Kind.ERROR, "不同的页面不允许使用相同的pageUrl $clazzName")
             } else {
-                val jsonObject = JSONObject()
-                jsonObject["id"] = id
-                jsonObject["clazName"] = clazName
-                jsonObject["needLogin"] = needLogin
-                jsonObject["asStarter"] = asStarter
-                jsonObject["clazName"] = clazName
-                jsonObject["isFragment"] = isFragment
-
+                val data = HashMap<String, Any?>()
+                data["id"] = id
+                data["needLogin"] = needLogin
+                data["asStarter"] = asStarter
+                data["pageUrl"] = pageUrl
+                data["className"] = clazzName
+                data["isFragment"] = isFragment
+                destMap[pageUrl] = data
             }
         }
     }
-
 }
