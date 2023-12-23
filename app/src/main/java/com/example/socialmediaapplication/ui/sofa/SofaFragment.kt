@@ -1,6 +1,7 @@
 package com.example.socialmediaapplication.ui.sofa
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,8 @@ import com.example.socialmediaapplication.databinding.FragmentHomeBinding
 @FragmentDestination(pageUrl = "main/tabs/sofa", asStarter = true)
 class SofaFragment : Fragment() {
 
+    private val TAG = "SofaFragment"
+
     private var _binding: FragmentHomeBinding? = null
 
     // This property is only valid between onCreateView and
@@ -24,6 +27,7 @@ class SofaFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
+        Log.d(TAG, "onCreateView: ")
         val homeViewModel =
                 ViewModelProvider(this).get(SofaViewModel::class.java)
 

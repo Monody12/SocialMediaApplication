@@ -32,9 +32,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 //                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications))
         setupActionBarWithNavController(navController)
         navView.setupWithNavController(navController)
-
+        // 获取fragment
+        val fragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main)!!
         // 设置导航图（使用自定义注解取代xml配置）
-        NavGraphBuilder.build(navController)
+        NavGraphBuilder.build(navController,this,fragment.id)
         // 点击事件
         navView.setOnNavigationItemSelectedListener {
             navController.navigate(it.itemId)
