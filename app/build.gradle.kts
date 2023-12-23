@@ -59,4 +59,7 @@ dependencies {
     implementation("com.alibaba:fastjson:1.2.75")
     implementation("com.google.code.gson:gson:2.8.9")
 
+    // material组件
+    implementation("com.google.android.material:material:1.4.0")
+
 }
