@@ -17,3 +17,5 @@ rootProject.name = "SocialMediaApplication"
 include(":app")
 include(":libNavAnnotation")
 include(":libNavCompiler")
+include(":libNetwork")
+include(":libCommon")

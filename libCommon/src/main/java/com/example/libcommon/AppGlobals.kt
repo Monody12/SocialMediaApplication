@@ -1,4 +1,4 @@
-package com.example.socialmediaapplication.utils
+package com.example.libcommon
 
 import android.annotation.SuppressLint
 import android.app.Application

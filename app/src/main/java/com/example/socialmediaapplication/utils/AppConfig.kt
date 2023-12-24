@@ -2,6 +2,7 @@ package com.example.socialmediaapplication.utils
 
 import android.content.res.AssetManager
 import com.alibaba.fastjson.JSON
+import com.example.libcommon.AppGlobals
 import com.example.socialmediaapplication.model.BottomBar
 import com.example.socialmediaapplication.model.Destination
 import com.google.gson.Gson
