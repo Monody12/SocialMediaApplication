@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
     id("kotlin-android")
     id("kotlin-kapt")
 }
@@ -34,6 +35,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
 }
 
@@ -66,5 +68,8 @@ dependencies {
 
     // material组件
     implementation("com.google.android.material:material:1.4.0")
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.9.0")
 
 }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/_10dp"
+    android:paddingRight="@dimen/_10dp"
+    android:layout_marginLeft="@dimen/_16dp"
+    android:layout_marginRight="@dimen/_16dp"
+    android:background="@color/color_gray2">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_60dp"
+        android:layout_gravity="right|top"
+        android:layout_marginRight="@dimen/_10dp"
+        android:src="@drawable/icon_god_comment2"></ImageView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <com.example.socialmediaapplication.view.MyImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+            </com.example.socialmediaapplication.view.MyImageView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_20dp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/_3d3d3d"
+                android:textSize="@dimen/_12sp"
+                tools:text="评论评论评论">
+            </TextView>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_12sp"
+                android:text="1000"/>
+            
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/_2dp"
+                android:layout_marginLeft="@dimen/_4dp"
+                android:src="@drawable/icon_cell_liked"/>
+        </LinearLayout>
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/_36dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:layout_marginTop="@dimen/_10dp"
+            android:textColor="@color/_3d3d3d"
+            android:textSize="@dimen/_14sp"
+            tools:text="这是有阿萨德萨达一个啊啊纱似的扩大实际付款评论"/>
+        
+    </LinearLayout>
+
+</FrameLayout>
