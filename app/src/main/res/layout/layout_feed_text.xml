@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -21,7 +22,8 @@
         android:maxLines="3"
         android:textColor="#2f2f2f"
         android:textSize="@dimen/_16sp"
-        android:visibility="@{TextUtils.isEmpty(feedText)?View.GONE:View.VISIBLE}">
+        android:visibility="@{TextUtils.isEmpty(feedText)?View.GONE:View.VISIBLE}"
+        tools:text="帖子内容，帖子内容，帖子内容，帖子内容，帖子内容，帖子内容，帖子内容，帖子内容，">
 
 
     </TextView>

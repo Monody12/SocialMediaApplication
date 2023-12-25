@@ -1,18 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:icon="@drawable/icon_tag"
-    app:iconSize="@dimen/_12dp"
-    app:iconTint="@color/color_theme"
-    app:iconGravity="textStart"
-    app:inconPadding="@dimen/_4dp"
-    app:cornerRadius="@dimen/_10dp"
-    android:backgroundTint="@color/color_gray"
-    android:textColor="@color/_2f2f2f"
-    android:orientation="vertical"
-    android:text="@string/app_name"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
 
-</com.google.android.material.button.MaterialButton>
+    <data>
+        <variable
+            name="tagText"
+            type="java.lang.String" />
+        <import type="android.text.TextUtils"/>
+        <import type="android.view.View"/>
+    </data>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:icon="@drawable/icon_tag"
+        app:iconSize="@dimen/_12dp"
+        app:iconTint="@color/color_theme"
+        app:iconGravity="textStart"
+        app:inconPadding="@dimen/_4dp"
+        app:cornerRadius="@dimen/_25dp"
+        android:backgroundTint="@color/color_gray"
+        android:textColor="@color/_2f2f2f"
+        android:visibility="@{TextUtils.isEmpty(tagText)?View.GONE:View.VISIBLE}"
+        android:text="@{tagText}"
+        android:layout_marginLeft="@dimen/_10dp"
+        tools:text="标签名称">
+
+    </com.google.android.material.button.MaterialButton>
+</layout>

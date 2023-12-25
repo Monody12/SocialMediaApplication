@@ -56,6 +56,14 @@ open class ApiService {
             }
             sConvert = convert
         }
+
+         fun <T> `get`(url: String): GetRequest<T> {
+            return GetRequest(sBaseUrl + url)
+        }
+
+        fun <T> post(url: String): PostRequest<T> {
+            return PostRequest(sBaseUrl + url)
+        }
     }
 
 
